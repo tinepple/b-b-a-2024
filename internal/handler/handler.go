@@ -7,8 +7,9 @@ import (
 )
 
 type Handler struct {
-	router   *gin.Engine
-	iStorage iStorage
+	router      *gin.Engine
+	iStorage    iStorage
+	authService authService
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -30,10 +31,11 @@ func (h *Handler) initRoutes() {
 	moderatorGroup.POST("/flat/update", h.FlatUpdate)
 }
 
-func New(iStorage iStorage) *Handler {
+func New(iStorage iStorage, authService authService) *Handler {
 	h := &Handler{
-		router:   gin.New(),
-		iStorage: iStorage,
+		router:      gin.New(),
+		iStorage:    iStorage,
+		authService: authService,
 	}
 
 	h.initRoutes()

@@ -25,7 +25,7 @@ func (h *Handler) FlatCreate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, FlatCreateResponse{
+	c.JSON(http.StatusOK, FlatCreateResponse{
 		ID:      flat.ID,
 		HouseID: flat.HouseID,
 		Price:   flat.Price,

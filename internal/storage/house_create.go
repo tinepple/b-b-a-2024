@@ -13,22 +13,17 @@ func (s *Storage) CreateHouse(ctx context.Context, house House) (House, error) {
 			"year",
 			"developer",
 		).
-		Values(
-			house.Address,
-			house.Year,
-			house.Developer,
-		).
-		Suffix("returning id, adress,year, developer, created_at, updated_at").
+		Values(house.Address, house.Year, house.Developer).
+		Suffix("returning id, address, year, developer, created_at, updated_at").
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
-
 	if err != nil {
 		return House{}, err
 	}
 
 	var dest House
 
-	err = s.db.QueryRow(query, params...).Scan(
+	err = s.db.QueryRowContext(ctx, s.db.Rebind(query), params...).Scan(
 		&dest.ID,
 		&dest.Address,
 		&dest.Year,
@@ -39,5 +34,6 @@ func (s *Storage) CreateHouse(ctx context.Context, house House) (House, error) {
 	if err != nil {
 		return House{}, err
 	}
-	return dest, err
+
+	return dest, nil
 }

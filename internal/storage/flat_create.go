@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
 )
@@ -28,6 +29,7 @@ func (s *Storage) CreateFlat(ctx context.Context, flat Flat) (Flat, error) {
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
+		fmt.Println(31)
 		return Flat{}, err
 	}
 
@@ -42,6 +44,7 @@ func (s *Storage) CreateFlat(ctx context.Context, flat Flat) (Flat, error) {
 		&dest.RoomsCount,
 	)
 	if err != nil {
+		fmt.Println(46)
 		return Flat{}, err
 	}
 
@@ -53,16 +56,19 @@ func (s *Storage) CreateFlat(ctx context.Context, flat Flat) (Flat, error) {
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
+		fmt.Println(58)
 		return Flat{}, err
 	}
 
 	_, err = tx.ExecContext(ctx, tx.Rebind(query), params...)
 	if err != nil {
+		fmt.Println(65)
 		return Flat{}, err
 	}
 
 	err = tx.Commit()
 	if err != nil {
+		fmt.Println(70)
 		return Flat{}, err
 	}
 
