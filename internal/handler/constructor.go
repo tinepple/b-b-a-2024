@@ -33,10 +33,10 @@ func (h *Handler) initRoutes() {
 	moderatorGroup.POST("/flat/update", h.FlatUpdate)
 }
 
-func New(iStorage iStorage, authService authService, kafkaService kafkaService, logger logger) *Handler {
+func New(storage iStorage, authService authService, kafkaService kafkaService, logger logger) *Handler {
 	h := &Handler{
 		router:       gin.New(),
-		storage:      iStorage,
+		storage:      storage,
 		authService:  authService,
 		kafkaService: kafkaService,
 		logger:       logger,

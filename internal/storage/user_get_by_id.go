@@ -29,7 +29,7 @@ func (s *Storage) GetUserByID(ctx context.Context, userID int64) (User, error) {
 		&dest.Role,
 	)
 	if err != nil {
-		return User{}, err
+		return User{}, handleError(err)
 	}
 
 	return dest, nil
