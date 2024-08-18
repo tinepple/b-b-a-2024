@@ -9,9 +9,10 @@ import (
 func (s *Storage) UpdateFlat(ctx context.Context, flat Flat) (Flat, error) {
 	query, params, err := sq.Update(flatsTableName).
 		SetMap(map[string]interface{}{
-			"price":       flat.Price,
-			"rooms_count": flat.RoomsCount,
-			"status":      flat.Status,
+			"price":        flat.Price,
+			"rooms_count":  flat.RoomsCount,
+			"status":       flat.Status,
+			"moderator_id": flat.ModeratorID.Int64,
 		}).
 		Where(sq.Eq{"id": flat.ID}).
 		Suffix("returning id, house_id, status, number, price, rooms_count").

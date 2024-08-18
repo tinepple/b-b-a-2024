@@ -2,6 +2,7 @@ package handler
 
 import (
 	"backend-bootcamp-assignment-2024/internal/handler/utils"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,14 +10,20 @@ import (
 
 func (h *Handler) DummyLogin(c *gin.Context) {
 	userType := utils.GetQueryString(c, "user_type")
-
-	token, err := h.authService.GenerateJWT(userType)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+	_, ok := ValidUserTypes[userType]
+	if !ok {
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	c.JSON(http.StatusCreated, DummyLoginResponse{
+	token, err := h.authService.GenerateJWT(userType, 0)
+	if err != nil {
+		h.logger.Errorf("handler.DummyLogin,authService.GenerateJWT error: %v", err)
+		h.handleError(c, errors.New("jwt generation error"))
+		return
+	}
+
+	c.JSON(http.StatusOK, DummyLoginResponse{
 		Token: token,
 	})
 }

@@ -7,9 +7,11 @@ import (
 )
 
 type Handler struct {
-	router      *gin.Engine
-	iStorage    iStorage
-	authService authService
+	router       *gin.Engine
+	storage      iStorage
+	authService  authService
+	kafkaService kafkaService
+	logger       logger
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +24,8 @@ func (h *Handler) initRoutes() {
 	h.router.POST("/register", h.Register)
 
 	authGroup := h.router.Group("/", h.Auth)
-	authGroup.GET("/house/{id}", h.HouseGet)
-	authGroup.POST("/house/{id}/subscribe", h.HouseGet)
+	authGroup.GET("/house/:id", h.HouseGet)
+	authGroup.POST("/house/:id/subscribe", h.HouseSubscribe)
 	authGroup.POST("/flat/create", h.FlatCreate)
 
 	moderatorGroup := h.router.Group("/", h.ModerationAuth)
@@ -31,11 +33,13 @@ func (h *Handler) initRoutes() {
 	moderatorGroup.POST("/flat/update", h.FlatUpdate)
 }
 
-func New(iStorage iStorage, authService authService) *Handler {
+func New(iStorage iStorage, authService authService, kafkaService kafkaService, logger logger) *Handler {
 	h := &Handler{
-		router:      gin.New(),
-		iStorage:    iStorage,
-		authService: authService,
+		router:       gin.New(),
+		storage:      iStorage,
+		authService:  authService,
+		kafkaService: kafkaService,
+		logger:       logger,
 	}
 
 	h.initRoutes()

@@ -3,15 +3,17 @@ package auth_service
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
-func (s *service) GenerateJWT(userRole string) (string, error) {
+func (s *service) GenerateJWT(userRole string, userID int64) (string, error) {
 	tokenTTL, _ := strconv.Atoi(os.Getenv("TOKEN_TTL"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":   userID,
 		"role": userRole,
 		"iat":  time.Now().Unix(),
 		"eat":  time.Now().Add(time.Second * time.Duration(tokenTTL)).Unix(),
@@ -59,4 +61,18 @@ func (s *service) getToken(token string) (*jwt.Token, error) {
 		return s.privateKey, nil
 	})
 	return jwtToken, err
+}
+
+func (s *service) GetUserID(jwtToken string) (int64, error) {
+	token, err := s.getToken(jwtToken)
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return 0, errors.New("invalid token provided")
+	}
+
+	return claims["id"].(int64), nil
 }

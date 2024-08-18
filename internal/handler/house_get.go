@@ -3,6 +3,7 @@ package handler
 import (
 	"backend-bootcamp-assignment-2024/internal/handler/utils"
 	"backend-bootcamp-assignment-2024/internal/storage"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -11,14 +12,16 @@ import (
 
 func (h *Handler) HouseGet(c *gin.Context) {
 	houseID, err := strconv.Atoi(c.Param("id"))
-	if err != nil || houseID < 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, "invalid id")
+	if err != nil || houseID < 1 {
+		h.logger.Errorf("handler.HouseGet,invalid id: %s", c.Param("id"))
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
 	flats, err := h.getFlatsByRole(c, int64(houseID))
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		h.logger.Errorf("handler.HouseGet,storage.GetFlatsByHouseID error: %v", err)
+		h.handleError(c, errors.New("error getting flats"))
 		return
 	}
 
@@ -35,12 +38,12 @@ func (h *Handler) getFlatsByRole(c *gin.Context, houseID int64) ([]Flat, error) 
 
 	token := utils.GetTokenFromRequest(c)
 	if h.authService.ValidateModeratorRoleJWT(token) == nil {
-		flats, err = h.iStorage.GetFlatsByHouseID(c, houseID, "")
+		flats, err = h.storage.GetFlatsByHouseID(c, houseID, "")
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		flats, err = h.iStorage.GetFlatsByHouseID(c, houseID, "approved")
+		flats, err = h.storage.GetFlatsByHouseID(c, houseID, ApprovedStatus)
 		if err != nil {
 			return nil, err
 		}

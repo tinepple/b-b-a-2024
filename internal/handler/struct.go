@@ -2,6 +2,18 @@ package handler
 
 import "time"
 
+var ValidUserTypes = map[string]struct{}{
+	"client":    {},
+	"moderator": {},
+}
+
+var ValidFlatStatuses = map[string]struct{}{
+	"created":       {},
+	"approved":      {},
+	"declined":      {},
+	"on moderation": {},
+}
+
 type HouseCreateRequest struct {
 	Address   string `json:"address"`
 	Year      int64  `json:"year"`
@@ -19,6 +31,10 @@ type HouseCreateResponse struct {
 
 type HouseGetResponse struct {
 	Flats []Flat `json:"flats"`
+}
+
+type HouseSubscribeRequest struct {
+	Email string `json:"email"`
 }
 
 type Flat struct {
@@ -59,7 +75,7 @@ type FlatUpdateResponse struct {
 }
 
 type RegisterRequest struct {
-	Email    string `json:"house_id"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 	UserType string `json:"user_type"`
 }
@@ -84,4 +100,9 @@ type DummyLoginResponse struct {
 type User struct {
 	ID   int64
 	Role string
+}
+
+type InternalErrorResponse struct {
+	Code    int64  `json:"code"`
+	Message string `json:"message"`
 }

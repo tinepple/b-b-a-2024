@@ -2,6 +2,8 @@ package handler
 
 import (
 	"backend-bootcamp-assignment-2024/internal/handler/utils"
+	"backend-bootcamp-assignment-2024/internal/storage"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +13,24 @@ func (h *Handler) Login(c *gin.Context) {
 	var req LoginRequest
 
 	if err := c.BindJSON(&req); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		h.logger.Errorf("handler.Login,BindJSON error: %v", err)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	user, err := h.iStorage.GetUserByID(c, req.ID)
+	if req.ID < 1 || req.Password == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.storage.GetUserByID(c, req.ID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		if errors.Is(err, storage.ErrNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		h.logger.Errorf("handler.Login,storage.GetUserByID error: %v", err)
+		h.handleError(c, errors.New("error getting user"))
 		return
 	}
 
@@ -26,13 +39,14 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateJWT(user.Role)
+	token, err := h.authService.GenerateJWT(user.Role, user.ID)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		h.logger.Errorf("handler.Login,authService.GenerateJWT error: %v", err)
+		h.handleError(c, errors.New("error generating JWT"))
 		return
 	}
 
-	c.JSON(http.StatusCreated, LoginResponse{
+	c.JSON(http.StatusOK, LoginResponse{
 		Token: token,
 	})
 }

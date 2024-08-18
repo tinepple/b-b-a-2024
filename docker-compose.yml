@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  zookeeper:
+   restart: always
+   container_name: zookeper
+   image: confluentinc/cp-zookeeper:latest
+   environment:
+     - ZOOKEEPER_CLIENT_PORT=2181
+
+  kafka:
+   container_name: kafka
+   image: confluentinc/cp-kafka:latest
+   restart: always
+   depends_on:
+     - zookeeper
+   environment:
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:${KAFKA_PORT}
+
+  apiserver:
+    container_name: apiserver
+    command: "./service"
+    build: .
+    restart: always
+    expose:
+      - ${APISERVER_PORT}
+    ports:
+      - ${APISERVER_PORT}:${APISERVER_PORT}
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      KAFKA_HOST: ${KAFKA_HOST}
+      KAFKA_PORT: ${KAFKA_PORT}
+      APISERVER_PORT: ${APISERVER_PORT}
+  
+  kafka-consumer:
+   container_name: kafka-consumer
+   command: "./kafka-consumer"
+   build: .
+   restart: always
+   depends_on:
+     - kafka
+     - postgres
+   environment:
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    POSTGRES_HOST: ${POSTGRES_HOST}
+    POSTGRES_PORT: ${POSTGRES_PORT}
+    POSTGRES_DB: ${POSTGRES_DB}
+    KAFKA_HOST: ${KAFKA_HOST}
+    KAFKA_PORT: ${KAFKA_PORT}
+
+volumes:
+  db-data:
