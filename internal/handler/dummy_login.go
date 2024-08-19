@@ -16,7 +16,7 @@ func (h *Handler) DummyLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateJWT(userType, 0)
+	token, err := h.authService.GenerateJWT(userType, "")
 	if err != nil {
 		h.logger.Errorf("handler.DummyLogin,authService.GenerateJWT error: %v", err)
 		h.handleError(c, errors.New("jwt generation error"))

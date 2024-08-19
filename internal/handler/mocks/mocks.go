@@ -66,7 +66,7 @@ func (mr *MockiStorageMockRecorder) CreateHouse(ctx, house interface{}) *gomock.
 }
 
 // CreateHouseUserSubscription mocks base method.
-func (m *MockiStorage) CreateHouseUserSubscription(ctx context.Context, houseID, userID int64) error {
+func (m *MockiStorage) CreateHouseUserSubscription(ctx context.Context, houseID int64, userID string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateHouseUserSubscription", ctx, houseID, userID)
 	ret0, _ := ret[0].(error)
@@ -80,10 +80,10 @@ func (mr *MockiStorageMockRecorder) CreateHouseUserSubscription(ctx, houseID, us
 }
 
 // CreateUser mocks base method.
-func (m *MockiStorage) CreateUser(ctx context.Context, user storage.User) (int64, error) {
+func (m *MockiStorage) CreateUser(ctx context.Context, user storage.User) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -140,7 +140,7 @@ func (mr *MockiStorageMockRecorder) GetUserByEmail(ctx, email interface{}) *gomo
 }
 
 // GetUserByID mocks base method.
-func (m *MockiStorage) GetUserByID(ctx context.Context, userID int64) (storage.User, error) {
+func (m *MockiStorage) GetUserByID(ctx context.Context, userID string) (storage.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserByID", ctx, userID)
 	ret0, _ := ret[0].(storage.User)
@@ -193,7 +193,7 @@ func (m *MockauthService) EXPECT() *MockauthServiceMockRecorder {
 }
 
 // GenerateJWT mocks base method.
-func (m *MockauthService) GenerateJWT(userRole string, userID int64) (string, error) {
+func (m *MockauthService) GenerateJWT(userRole string, userID string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateJWT", userRole, userID)
 	ret0, _ := ret[0].(string)
@@ -208,10 +208,10 @@ func (mr *MockauthServiceMockRecorder) GenerateJWT(userRole, userID interface{})
 }
 
 // GetUserID mocks base method.
-func (m *MockauthService) GetUserID(jwtToken string) (int64, error) {
+func (m *MockauthService) GetUserID(jwtToken string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUserID", jwtToken)
-	ret0, _ := ret[0].(int64)
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

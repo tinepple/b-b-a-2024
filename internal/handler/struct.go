@@ -81,11 +81,11 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	UserID int64 `json:"user_id"`
+	UserID string `json:"user_id"`
 }
 
 type LoginRequest struct {
-	ID       int64  `json:"id"`
+	ID       string `json:"id"`
 	Password string `json:"password"`
 }
 

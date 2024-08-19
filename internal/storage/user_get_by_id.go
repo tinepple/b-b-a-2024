@@ -6,7 +6,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (s *Storage) GetUserByID(ctx context.Context, userID int64) (User, error) {
+func (s *Storage) GetUserByID(ctx context.Context, userID string) (User, error) {
 	query, params, err := sq.Select(
 		"id",
 		"email",

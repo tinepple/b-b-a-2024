@@ -48,9 +48,9 @@ func (h *Handler) FlatUpdate(c *gin.Context) {
 		Price:      req.Price,
 		RoomsCount: req.Rooms,
 		Status:     req.Status,
-		ModeratorID: sql.NullInt64{
-			Int64: userID,
-			Valid: userID > 0,
+		ModeratorID: sql.NullString{
+			String: userID,
+			Valid:  userID != "",
 		},
 	})
 	if err != nil {
@@ -68,14 +68,14 @@ func (h *Handler) FlatUpdate(c *gin.Context) {
 	})
 }
 
-func (h *Handler) isFlatUpdateAvailable(c *gin.Context, userID, flatID int64, status string) (bool, error) {
+func (h *Handler) isFlatUpdateAvailable(c *gin.Context, userID string, flatID int64, status string) (bool, error) {
 	flat, err := h.storage.GetFlatByID(c, flatID)
 	if err != nil {
 		h.logger.Errorf("handler.FlatUpdate,storage.GetFlatByID error: %v", err)
 		return false, err
 	}
 
-	if flat.Status == ApprovedStatus || flat.Status == DeclinedStatus || flat.Status == OnModerationStatus && (flat.ModeratorID.Valid && flat.ModeratorID.Int64 != userID) {
+	if flat.Status == ApprovedStatus || flat.Status == DeclinedStatus || flat.Status == OnModerationStatus && (flat.ModeratorID.Valid && flat.ModeratorID.String != userID) {
 		return false, nil
 	}
 

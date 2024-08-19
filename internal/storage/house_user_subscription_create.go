@@ -2,10 +2,11 @@ package storage
 
 import (
 	"context"
+
 	sq "github.com/Masterminds/squirrel"
 )
 
-func (s *Storage) CreateHouseUserSubscription(ctx context.Context, houseID, userID int64) error {
+func (s *Storage) CreateHouseUserSubscription(ctx context.Context, houseID int64, userID string) error {
 	query, params, err := sq.Insert(houseUserSubscriptionsTableName).
 		Columns(
 			"house_id",

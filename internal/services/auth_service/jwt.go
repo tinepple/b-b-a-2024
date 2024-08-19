@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-func (s *service) GenerateJWT(userRole string, userID int64) (string, error) {
+func (s *service) GenerateJWT(userRole string, userID string) (string, error) {
 	tokenTTL, _ := strconv.Atoi(os.Getenv("TOKEN_TTL"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":   userID,
@@ -63,16 +63,16 @@ func (s *service) getToken(token string) (*jwt.Token, error) {
 	return jwtToken, err
 }
 
-func (s *service) GetUserID(jwtToken string) (int64, error) {
+func (s *service) GetUserID(jwtToken string) (string, error) {
 	token, err := s.getToken(jwtToken)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return 0, errors.New("invalid token provided")
+		return "", errors.New("invalid token provided")
 	}
 
-	return claims["id"].(int64), nil
+	return claims["id"].(string), nil
 }

@@ -18,7 +18,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	if req.ID < 1 || req.Password == "" {
+	if !utils.IsValidUUID(req.ID) || req.Password == "" {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

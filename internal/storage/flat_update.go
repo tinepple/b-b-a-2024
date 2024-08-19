@@ -12,7 +12,7 @@ func (s *Storage) UpdateFlat(ctx context.Context, flat Flat) (Flat, error) {
 			"price":        flat.Price,
 			"rooms_count":  flat.RoomsCount,
 			"status":       flat.Status,
-			"moderator_id": flat.ModeratorID.Int64,
+			"moderator_id": flat.ModeratorID.String,
 		}).
 		Where(sq.Eq{"id": flat.ID}).
 		Suffix("returning id, house_id, status, number, price, rooms_count").

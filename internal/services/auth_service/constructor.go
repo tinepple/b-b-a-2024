@@ -9,10 +9,10 @@ type service struct {
 }
 
 type Service interface {
-	GenerateJWT(userRole string, userID int64) (string, error)
+	GenerateJWT(userRole string, userID string) (string, error)
 	ValidateModeratorRoleJWT(jwtToken string) error
 	ValidateClientRoleJWT(jwtToken string) error
-	GetUserID(jwtToken string) (int64, error)
+	GetUserID(jwtToken string) (string, error)
 }
 
 func New() Service {

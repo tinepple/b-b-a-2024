@@ -15,17 +15,17 @@ type House struct {
 }
 
 type Flat struct {
-	ID          int64         `db:"id"`
-	HouseID     int64         `db:"house_id"`
-	Status      string        `db:"status"`
-	Number      sql.NullInt64 `db:"number"` // про поле написано в описании, но нигде нет в контрактах
-	Price       int64         `db:"price"`
-	RoomsCount  int64         `db:"rooms_count"`
-	ModeratorID sql.NullInt64 `db:"moderator_id"`
+	ID          int64          `db:"id"`
+	HouseID     int64          `db:"house_id"`
+	Status      string         `db:"status"`
+	Number      sql.NullInt64  `db:"number"` // про поле написано в описании, но нигде нет в контрактах
+	Price       int64          `db:"price"`
+	RoomsCount  int64          `db:"rooms_count"`
+	ModeratorID sql.NullString `db:"moderator_id"`
 }
 
 type User struct {
-	ID       int64  `db:"id"`
+	ID       string `db:"id"`
 	Email    string `db:"email"`
 	Password string `db:"password"`
 	Role     string `db:"role"`
