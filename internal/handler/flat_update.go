@@ -32,6 +32,11 @@ func (h *Handler) FlatUpdate(c *gin.Context) {
 		return
 	}
 
+	if userID == "" {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	isFlatUpdateAvailable, err := h.isFlatUpdateAvailable(c, userID, req.ID, req.Status)
 	if err != nil {
 		h.handleError(c, errors.New("access checking error"))

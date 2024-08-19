@@ -4,16 +4,18 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
 )
 
 func (s *Storage) CreateUser(ctx context.Context, user User) (string, error) {
 	query, params, err := sq.Insert(usersTableName).
 		Columns(
+			"id",
 			"email",
 			"password",
 			"role",
 		).
-		Values(user.Email, user.Password, user.Role).
+		Values(uuid.New().String(), user.Email, user.Password, user.Role).
 		Suffix("returning id").
 		PlaceholderFormat(sq.Dollar).
 		ToSql()

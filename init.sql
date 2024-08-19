@@ -10,7 +10,7 @@ create table houses (
 create type user_role as enum ('client', 'moderator');
 
 create table users (
-    id serial primary key,
+    id uuid primary key,
     email text unique not null,
     password text not null,
     role user_role not null
